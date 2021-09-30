@@ -11,7 +11,8 @@ import java.util.Optional;
 @Repository
 public interface FileRepository extends JpaRepository<File, Long> {
 
-    Optional<File> findFileById(Long aLong);
+    Optional<File> findFileByIdAndUser(Long id, User user);
 
     List<File> findAllByUserOrderByCreateDateDesc(User user);
+
 }
