@@ -41,7 +41,6 @@ public class User {
     private Collection<? extends GrantedAuthority> authorities;
 
     public User() {
-
     }
 
     @PrePersist
