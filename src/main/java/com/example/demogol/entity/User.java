@@ -2,6 +2,8 @@ package com.example.demogol.entity;
 
 import com.example.demogol.entity.enums.Role;
 
+import javax.persistence.PrePersist;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,5 +20,10 @@ public class User {
 
     private Set<Role> role = new HashSet<>();
     private List<File> files = new ArrayList<>();
+    private LocalDateTime createDate;
 
+    @PrePersist
+    protected void onCreate() {
+        this.createDate = LocalDateTime.now();
+    }
 }
