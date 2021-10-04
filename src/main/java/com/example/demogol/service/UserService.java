@@ -24,7 +24,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User createUser(SignupRequest userIn) throws UserExistException {
+    public User createUser(SignupRequest userIn) {
         User user = new User();
         user.setEmail(userIn.getEmail());
         user.setName(userIn.getName());
