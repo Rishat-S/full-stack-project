@@ -1,5 +1,6 @@
 package com.example.demogol.service;
 
+import com.example.demogol.dto.UserDTO;
 import com.example.demogol.entity.User;
 import com.example.demogol.entity.enums.Role;
 import com.example.demogol.exceptions.UserExistException;
@@ -8,8 +9,11 @@ import com.example.demogol.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.security.Principal;
 
 @Service
 public class UserService {
@@ -40,6 +44,23 @@ public class UserService {
             LOG.error("Error during registration. {}", e.getMessage());
             throw new UserExistException("The user " + user.getUsername() + " already exist. Please check credentials");
         }
+    }
+
+    private User getUserByPrincipal(Principal principal) {
+        String username = principal.getName();
+        return userRepository.findUserByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found with username " + username));
+    }
+
+    public User getCurrentUser(Principal principal) {
+        return getUserByPrincipal(principal);
+    }
+
+    public User updateUser(UserDTO userDTO, Principal principal) {
+        User user = getUserByPrincipal(principal);
+        user.setName(userDTO.getFirstname());
+        user.setLastname(userDTO.getLastname());
+        return userRepository.save(user);
     }
 
 }
