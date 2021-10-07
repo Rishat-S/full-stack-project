@@ -1,6 +1,7 @@
 package com.example.demogol.entity;
 
-import com.example.demogol.entity.enums.Role;
+
+import com.example.demogol.entity.enums.ERole;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -10,8 +11,8 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
-@Data
 @Entity
+@Data
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,23 +21,26 @@ public class User implements UserDetails {
     private String name;
     @Column(unique = true, updatable = false)
     private String username;
+    @Column(nullable = false)
     private String lastname;
     @Column(unique = true)
     private String email;
+    @Column(columnDefinition = "text")
+    private String bio;
     @Column(length = 3000)
     private String password;
 
-    @ElementCollection(targetClass = Role.class)
+    @ElementCollection(targetClass = ERole.class)
     @CollectionTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"))
-    private Set<Role> roles = new HashSet<>();
+    private Set<ERole> roles = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
-    private List<File> files = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval = true)
+    private List<Post> posts = new ArrayList<>();
 
     @JsonFormat(pattern = "yyyy-mm-dd HH:mm:ss")
     @Column(updatable = false)
-    private LocalDateTime createDate;
+    private LocalDateTime createdDate;
 
     @Transient
     private Collection<? extends GrantedAuthority> authorities;
@@ -58,12 +62,13 @@ public class User implements UserDetails {
 
     @PrePersist
     protected void onCreate() {
-        this.createDate = LocalDateTime.now();
+        this.createdDate = LocalDateTime.now();
     }
 
     /**
      * SECURITY
      */
+
 
     @Override
     public String getPassword() {
