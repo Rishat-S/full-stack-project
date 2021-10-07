@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface FileRepository extends JpaRepository<Post, Long> {
+public interface PostRepository extends JpaRepository<Post, Long> {
 
-    Optional<Post> findFileById(Long id);
+    List<Post> findAllByUserOrderByCreatedDateDesc(User user);
 
-    Optional<Post> findFileByIdAndUser(Long id, User user);
+    List<Post> findAllByOrderByCreatedDateDesc();
 
-    List<Post> findAllByUserOrderByCreateDateDesc(User user);
+    Optional<Post> findPostByIdAndUser(Long id, User user);
 
 }
