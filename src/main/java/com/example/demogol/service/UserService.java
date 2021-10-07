@@ -2,7 +2,7 @@ package com.example.demogol.service;
 
 import com.example.demogol.dto.UserDTO;
 import com.example.demogol.entity.User;
-import com.example.demogol.entity.enums.Role;
+import com.example.demogol.entity.enums.ERole;
 import com.example.demogol.exceptions.UserExistException;
 import com.example.demogol.payload.request.SignupRequest;
 import com.example.demogol.repository.UserRepository;
@@ -35,7 +35,7 @@ public class UserService {
         user.setLastname(userIn.getLastname());
         user.setUsername(userIn.getUsername());
         user.setPassword(passwordEncoder.encode(userIn.getPassword()));
-        user.getRoles().add(Role.ROLE_USER);
+        user.getRoles().add(ERole.ROLE_USER);
 
         try {
             LOG.info("Saving user {}", userIn.getEmail());
