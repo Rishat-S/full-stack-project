@@ -1,6 +1,7 @@
 package com.example.demogol.service;
 
 import com.example.demogol.dto.PostDTO;
+import com.example.demogol.entity.ImageModel;
 import com.example.demogol.entity.Post;
 import com.example.demogol.entity.User;
 import com.example.demogol.exceptions.PostNotFoundException;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PostService {
@@ -51,8 +53,40 @@ public class PostService {
         User user = getUserByPrincipal(principal);
 
         return postRepository.findPostByIdAndUser(postId, user)
-                .orElseThrow(() -> new PostNotFoundException("Post cannot be found for username; " + user.getEmail()))
-                ;
+                .orElseThrow(() -> new PostNotFoundException("Post cannot be found for username; " + user.getEmail()));
+    }
+
+    public List<Post> getAllPostForUser(Principal principal) {
+        User user = getUserByPrincipal(principal);
+        return postRepository.findAllByUserOrderByCreatedDateDesc(user);
+    }
+
+    public Post likePost(Long postId, String username) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException("Post cannot be found"));
+
+        Optional<String> userLiked = post.getLikedUsers()
+                .stream()
+                .filter(u -> u.equals(username)).findAny();
+
+        if (userLiked.isPresent()) {
+            post.setLikes(post.getLikes() - 1);
+            post.getLikedUsers().remove(username);
+        } else {
+            post.setLikes(post.getLikes() + 1);
+            post.getLikedUsers().add(username);
+        }
+
+        return postRepository.save(post);
+
+    }
+
+    public void deletePost(Long postId, Principal principal) {
+        Post post = getPostById(postId, principal);
+        Optional<ImageModel> imageModel = imageRepository.findByPostId(postId);
+        postRepository.delete(post);
+        imageModel.ifPresent(imageRepository::delete);
+
     }
 
     private User getUserByPrincipal(Principal principal) {
