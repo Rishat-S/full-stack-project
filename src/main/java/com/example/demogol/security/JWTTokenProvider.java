@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,11 +43,8 @@ public class JWTTokenProvider {
                     .setSigningKey(SecurityConstants.SECRET)
                     .parseClaimsJws(token);
             return true;
-        } catch (SignatureException |
-                MalformedJwtException |
-                ExpiredJwtException |
-                UnsupportedJwtException |
-                IllegalArgumentException ex) {
+        } catch (SignatureException | MalformedJwtException | ExpiredJwtException |
+                UnsupportedJwtException | IllegalArgumentException ex) {
             LOG.error(ex.getMessage());
             return false;
         }
@@ -58,9 +56,7 @@ public class JWTTokenProvider {
                 .parseClaimsJws(token)
                 .getBody();
         String id = (String) claims.get("id");
-
         return Long.parseLong(id);
-
     }
 
 }

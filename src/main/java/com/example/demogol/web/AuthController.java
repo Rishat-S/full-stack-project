@@ -26,6 +26,7 @@ import javax.validation.Valid;
 @RequestMapping("/api/auth")
 @PreAuthorize("permitAll()")
 public class AuthController {
+
     @Autowired
     private JWTTokenProvider jwtTokenProvider;
     @Autowired
@@ -62,7 +63,6 @@ public class AuthController {
         }
 
         userService.createUser(signupRequest);
-
         return ResponseEntity.ok(new MessageResponse("User registered successfully"));
     }
 
